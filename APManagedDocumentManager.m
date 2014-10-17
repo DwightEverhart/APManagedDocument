@@ -127,12 +127,22 @@ static __strong APManagedDocumentManager* gInstance;
     return  [[self documentsURL] URLByAppendingPathComponent:fileName];
 }
 
+- (APManagedDocument*)createDocumentWithIdentifier:(NSString*)identifier {
+   APManagedDocument* document = [[APManagedDocument alloc] initWithDocumentIdentifier:identifier];
+   if (document)
+      [self _processDocumentWithIdentifier:identifier];
+   return document;
+}
+
 - (APManagedDocument*)createNewManagedDocumentWithName:(NSString*)documentName {
-    NSString* identifier = [NSString stringWithFormat:@"%@_%@_%@", documentName, self.documentSetIdentifier, [self _generateUniqueIdentifier]];
-    APManagedDocument* document = [[APManagedDocument alloc] initWithDocumentIdentifier:identifier];
-    if (document)
-        [self _processDocumentWithIdentifier:identifier];
-    return document;
+   NSString* identifier = [NSString stringWithFormat:@"%@_%@_%@", documentName, self.documentSetIdentifier, [self _generateUniqueIdentifier]];
+   return [self createDocumentWithIdentifier:identifier];
+}
+
+- (APManagedDocument*)createNewManagedDocumentWithAbsoluteName:(NSString*)documentName
+{
+   NSString* identifier = [NSString stringWithFormat:@"%@_%@", documentName, self.documentSetIdentifier];
+   return [self createDocumentWithIdentifier:identifier];
 }
 
 - (APManagedDocument*)openExistingManagedDocumentWithIdentifier:(NSString*)identifier {
