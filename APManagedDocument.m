@@ -48,13 +48,9 @@ static __strong NSString* gPersistentStoreName = @"persistentStore";
         // Since both open and save will use the same completion handlers we
         // create a named block to call on completion
         void (^completionHandler)(BOOL) = ^(BOOL success) {
-            if (success) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [manager _contextInitializedForDocument:self success:success];
-                });
-            } else {
-                NSLog(@"APManagedDocument failed to initialize.");
-            }
+           dispatch_async(dispatch_get_main_queue(), ^{
+              [manager _contextInitializedForDocument:self success:success];
+           });
         };
         
         self.persistentStoreOptions = [manager optionsForDocumentWithIdentifier:identifier];
