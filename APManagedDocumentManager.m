@@ -153,6 +153,15 @@ static __strong APManagedDocumentManager* gInstance;
     return doc;
 }
 
+- (APManagedDocument*)openExistingManagedDocumentWithName:(NSString*)documentName {
+   NSString* identifier = [NSString stringWithFormat:@"%@_%@", documentName, self.documentSetIdentifier];
+   APManagedDocument* doc = nil;
+   if ([_documentIdentifiers containsObject:identifier]) {
+      doc = [[APManagedDocument alloc] initWithDocumentIdentifier:identifier];
+   }
+   return doc;
+}
+
 - (BOOL)deleteManagedDocumentWithIdentifier:(NSString*)identifier {
     BOOL success = NO;
     NSError* err = nil;

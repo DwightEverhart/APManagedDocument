@@ -77,6 +77,11 @@ extern NSString * const APNewDocumentFound;
 //          so the same document created on other devices will be merged.
 - (APManagedDocument*)createNewManagedDocumentWithAbsoluteName:(NSString*)documentName;
 
+// Public: Opens an existing managed document and manages it in regards to iCloud
+//          storage. The document's name is not appended with a unique identifier,
+//          so the same document created on other devices will be merged.
+- (APManagedDocument*)openExistingManagedDocumentWithName:(NSString*)documentName;
+
 // Public: Opens an existing managed document and manages it in regards to
 //          iCloud storage.
 - (APManagedDocument*)openExistingManagedDocumentWithIdentifier:(NSString*)identifier;
