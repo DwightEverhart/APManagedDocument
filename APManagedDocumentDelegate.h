@@ -11,4 +11,5 @@
 
 @protocol APManagedDocumentDelegate <NSObject>
 - (void)documentInitialized:(APManagedDocument*)document success:(BOOL)success;
+- (void)documentFailedToSave:(APManagedDocument*)document error:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted;
 @end

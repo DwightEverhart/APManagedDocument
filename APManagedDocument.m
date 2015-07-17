@@ -10,6 +10,9 @@
 #import "APManagedDocumentManager.h"
 #import "APManagedDocumentDelegate.h"
 #import <CoreData/CoreData.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
+
+static const int ddLogLevel = DEFAULT_LOG_LEVEL;
 
 NSString * const APPersistentStoreCoordinatorStoresWillChangeNotification = @"APPersistentStoreCoordinatorStoresWillChangeNotification";
 NSString * const APPersistentStoreCoordinatorStoresDidChangeNotification = @"APPersistentStoreCoordinatorStoresDidChangeNotification";
@@ -67,6 +70,31 @@ static __strong NSString* gPersistentStoreName = @"persistentStore";
 
 - (void)save {
     [self updateChangeCount:UIDocumentChangeDone];
+}
+
+- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+{
+	DDLogVerbose(@"Auto-saving document %@", self);
+	return [super contentsForType:typeName error:outError];
+}
+
+- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted
+{
+	DDLogError(@"Document failed to save: %@", error.localizedDescription);
+
+	NSArray* errors = [[error userInfo] objectForKey:NSDetailedErrorsKey];
+	if(errors != nil && errors.count > 0) {
+		for (error in errors) {
+			DDLogError(@"  Error: %@", error.userInfo);
+		}
+	} else {
+		DDLogError(@"  %@", error.userInfo);
+	}
+
+	id <APManagedDocumentDelegate> delegate = [[APManagedDocumentManager sharedDocumentManager] documentDelegate];
+	if ([delegate respondsToSelector:@selector(documentFailedToSave:error:userInteractionPermitted:)]) {
+		[delegate documentFailedToSave: self error: error userInteractionPermitted: userInteractionPermitted];
+	}
 }
 
 + (NSString*)persistentStoreName {
