@@ -78,22 +78,22 @@ static __strong NSString* gPersistentStoreName = @"persistentStore";
 	return [super contentsForType:typeName error:outError];
 }
 
-- (void)handleError:(NSError *)error userInteractionPermitted:(BOOL)userInteractionPermitted
+- (void)handleError:(NSError *)rootError userInteractionPermitted:(BOOL)userInteractionPermitted
 {
-	DDLogError(@"Document failed to save: %@", error.localizedDescription);
+	DDLogError(@"Document failed to save: %@", rootError.localizedDescription);
 
-	NSArray* errors = [[error userInfo] objectForKey:NSDetailedErrorsKey];
+	NSArray* errors = [[rootError userInfo] objectForKey:NSDetailedErrorsKey];
 	if(errors != nil && errors.count > 0) {
-		for (error in errors) {
+		for (NSError *error in errors) {
 			DDLogError(@"  Error: %@", error.userInfo);
 		}
 	} else {
-		DDLogError(@"  %@", error.userInfo);
+		DDLogError(@"  %@", rootError.userInfo);
 	}
 
 	id <APManagedDocumentDelegate> delegate = [[APManagedDocumentManager sharedDocumentManager] documentDelegate];
 	if ([delegate respondsToSelector:@selector(documentFailedToSave:error:userInteractionPermitted:)]) {
-		[delegate documentFailedToSave: self error: error userInteractionPermitted: userInteractionPermitted];
+		[delegate documentFailedToSave: self error: rootError userInteractionPermitted: userInteractionPermitted];
 	}
 }
 
