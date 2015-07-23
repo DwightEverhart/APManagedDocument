@@ -68,15 +68,27 @@ static __strong NSString* gPersistentStoreName = @"persistentStore";
     return self;
 }
 
-- (void)save {
+- (void)scheduleSave {
     [self updateChangeCount:UIDocumentChangeDone];
 }
 
-- (id)contentsForType:(NSString *)typeName error:(NSError *__autoreleasing *)outError
+- (void)saveNow
 {
-	DDLogVerbose(@"Auto-saving document %@", self);
-	return [super contentsForType:typeName error:outError];
+	[self saveNow: nil];
 }
+
+- (void)saveNow:(void (^)(BOOL success))completionHandler
+{
+	[self saveToURL:self.fileURL forSaveOperation:UIDocumentSaveForOverwriting completionHandler:completionHandler];
+}
+
+#ifdef DEBUG
+-(void)saveToURL:(NSURL *)url forSaveOperation:(UIDocumentSaveOperation)saveOperation completionHandler:(void (^)(BOOL))completionHandler
+{
+	DDLogDebug(@"Saving document %@", self);
+	[super saveToURL:url forSaveOperation:saveOperation completionHandler:completionHandler];
+}
+#endif
 
 - (void)handleError:(NSError *)rootError userInteractionPermitted:(BOOL)userInteractionPermitted
 {
