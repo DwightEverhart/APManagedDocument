@@ -314,7 +314,7 @@ static __strong APManagedDocumentManager* gInstance;
             }
             else
             {
-                NSString* searchPattern = [NSString stringWithFormat:@"([^/.]+_%@_[A-F0-9]{8}_[A-F0-9]{8})%@/StoreContent/%@",
+                NSString* searchPattern = [NSString stringWithFormat:@"([^/.]+_%@(_[A-F0-9]{8}_[A-F0-9]{8}|))%@/StoreContent/%@",
                                            self.documentSetIdentifier,
                                            self.documentsExtention ?
                                                 [NSString stringWithFormat:@"\\.%@", self.documentsExtention] :
